@@ -5728,6 +5728,9 @@ StreamInPrimary::~StreamInPrimary() {
         free(mPalInDevice);
         mPalInDevice = NULL;
     }
+    if (lvacfs.getWrapperOps() && lvacfs_handle) {
+        lvacfs.stopInputStream(this);
+    }
     stream_mutex_.unlock();
 }
 
