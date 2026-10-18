@@ -1510,6 +1510,9 @@ int AudioDevice::SetParameters(const char *kvpairs) {
         ret = 0;
         return ret;
     }
+    if (Lvacfs::getInstance().getWrapperOps()) {
+        Lvacfs::getInstance().setParameters(parms);
+    }
     AudioExtn::audio_extn_set_parameters(adev_, parms);
     audio_extn_sound_trigger_set_parameters(adev_, parms);
 
