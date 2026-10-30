@@ -14,6 +14,7 @@ enum class Scene {
     DEFAULT,
     INTERVIEW,
     CONFERENCE,
+    APP1,
 };
 
 struct Capture {

@@ -105,7 +105,8 @@ void Lvacfs::setParameters(struct str_parms* parms) {
     std::lock_guard<std::mutex> lock(lock_);
     scene_ = !strcmp(mode, "interview") ? lvacfs::Scene::INTERVIEW
            : !strcmp(mode, "conference") ? lvacfs::Scene::CONFERENCE
-                                         : lvacfs::Scene::DEFAULT;
+           : !strcmp(mode, "app1") ? lvacfs::Scene::APP1
+                                   : lvacfs::Scene::DEFAULT;
 }
 
 // Values match tinyalsa's pcm_format enum in tinyalsa/asoundlib.h.
