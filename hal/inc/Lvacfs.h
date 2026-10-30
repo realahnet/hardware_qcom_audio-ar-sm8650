@@ -59,4 +59,5 @@ class Lvacfs {
     // The wrapper shares its params path between instances.
     std::mutex lock_;
     lvacfs::Scene scene_ = lvacfs::Scene::DEFAULT;
+    int effect_type_ = -1;
 };

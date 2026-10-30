@@ -9,6 +9,7 @@
 #include <Lvacfs.h>
 #include <LvacfsDeviceProfiles.h>
 #include <cutils/str_parms.h>
+#include <cstdlib>
 #include <cstring>
 #include <dlfcn.h>
 #include <log/log.h>
@@ -99,14 +100,20 @@ void Lvacfs::deinit() {
 
 void Lvacfs::setParameters(struct str_parms* parms) {
     char mode[32];
-    if (str_parms_get_str(parms, "local_record_mode", mode, sizeof(mode)) < 0) {
-        return;
-    }
+    char effect_type[32];
+
     std::lock_guard<std::mutex> lock(lock_);
-    scene_ = !strcmp(mode, "interview") ? lvacfs::Scene::INTERVIEW
-           : !strcmp(mode, "conference") ? lvacfs::Scene::CONFERENCE
-           : !strcmp(mode, "app1") ? lvacfs::Scene::APP1
-                                   : lvacfs::Scene::DEFAULT;
+    if (str_parms_get_str(parms, "local_record_mode", mode, sizeof(mode)) >= 0) {
+        scene_ = !strcmp(mode, "interview")    ? lvacfs::Scene::INTERVIEW
+               : !strcmp(mode, "conference")   ? lvacfs::Scene::CONFERENCE
+               : !strcmp(mode, "app1")         ? lvacfs::Scene::APP1
+                                               : lvacfs::Scene::DEFAULT;
+    }
+    if (str_parms_get_str(parms, "vendor_audiorecord_effect_type", effect_type,
+                          sizeof(effect_type)) >= 0 &&
+        effect_type[0] != '\0') {
+        effect_type_ = std::atoi(effect_type);
+    }
 }
 
 // Values match tinyalsa's pcm_format enum in tinyalsa/asoundlib.h.
@@ -131,6 +138,7 @@ int Lvacfs::getProfile(StreamInPrimary* in) const {
         in->config_.sample_rate,
         audio_channel_count_from_in_mask(in->config_.channel_mask),
         scene_,
+        effect_type_,
     });
 }
 

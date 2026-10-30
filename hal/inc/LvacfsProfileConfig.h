@@ -23,6 +23,7 @@ struct Capture {
     uint32_t sample_rate;
     uint32_t channels;
     Scene scene;
+    int effect_type = -1;
 };
 
 }  // namespace lvacfs
