@@ -179,8 +179,12 @@ void Lvacfs::processInputStream(StreamInPrimary* in, void* buffer, size_t bytes)
     uint32_t num_frames = bytes / (channel_count * audio_bytes_per_sample(in->config_.format));
     uint8_t status_buffer[0x160] = {0};
     int profile = getProfile(in);
-    int ret = profile < 0 ? -EINVAL : 0;
-    if (!ret && in->lvacfs_profile != uint32_t(profile)) {
+    if (profile < 0) {
+        /* Device/source not applicable to LVACFS; keep the instance for later routes. */
+        return;
+    }
+    int ret = 0;
+    if (in->lvacfs_profile != uint32_t(profile)) {
         ret = wrapper_ops_->set_profile(in->lvacfs_handle, profile);
         if (!ret) {
             in->lvacfs_profile = profile;
